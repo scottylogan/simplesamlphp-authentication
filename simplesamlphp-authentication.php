@@ -72,7 +72,7 @@ if (!class_exists('SimpleSAMLAuthentication')) {
      If the user has not logged in previously, we create an accout for them
     */
     function authenticate(&$username, &$password) {
-      global $using_cookie, $simplesaml_authentication_opt, $simplesaml_configured, $config;
+      global $simplesaml_authentication_opt, $simplesaml_configured, $config;
 
       if (!$simplesaml_configured)
         die("simplesaml-authentication plugin not configured");
@@ -92,7 +92,7 @@ if (!class_exists('SimpleSAMLAuthentication')) {
             );
       }
 
-      if (!$session->isValid($sp_type) ) {
+      if (!$session->isAuthenticated() ) {
         exit();
       }
 
@@ -166,17 +166,17 @@ if (!class_exists('SimpleSAMLAuthentication')) {
     
     
     function logout() {
-      global $using_cookie, $simplesaml_authentication_opt, $simplesaml_configured, $config;
-
+      global $simplesaml_authentication_opt, $simplesaml_configured, $config;
       if (!$simplesaml_configured)
         die("simplesaml-authentication not configured");
 
       $sp_type = $simplesaml_authentication_opt['sp_type'];
+	
       SimpleSAML_Utilities::redirect(
           '/' . $config->getBaseURL() . $sp_type . '/sp/initSLO.php',
-          array('RelayState' => SimpleSAML_Utilities::selfURL())
+          array('RelayState' => wp_get_referer()
+		)
           );
-      exit();
     }
     
     /*
