@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: simpleSAMLphp Authentication
-Version: 0.1
+Version: 0.2.1
 Plugin URI: http://grid.ie/wiki/WordPress_simpleSAMLphp_authentication
 Description: Authenticate users using <a href="http://rnd.feide.no/simplesamlphp">simpleSAMLphp</a>.
 Author: David O'Callaghan
@@ -32,18 +32,13 @@ $simplesaml_authentication_opt = get_option('simplesaml_authentication_options')
 $simplesaml_configured = true;
 
 // try to configure the simpleSAMLphp client
-if ($simplesaml_authentication_opt['include_path'] == '')
+if ($simplesaml_authentication_opt['include_path'] == '') {
   $simplesaml_configured = false;
-$include_file = $simplesaml_authentication_opt['include_path']."/www/_include.php";
-if (!require_once($include_file))
-  $simplesaml_configured = false;
-
-/*
-if ($simplesaml_authentication_opt['server_hostname'] == '' ||
-    $simplesaml_authentication_opt['server_path'] == '' ||
-    intval($simplesaml_authentication_opt['server_port']) == 0)
-  $simplesaml_configured = false;
-*/
+} else { 
+  $include_file = $simplesaml_authentication_opt['include_path']."/www/_include.php";
+  if (!include_once($include_file))
+    $simplesaml_configured = false;
+}
 
 if ($simplesaml_configured)
   $config = SimpleSAML_Configuration::getInstance();
@@ -211,12 +206,9 @@ function simplesaml_authentication_options_page() {
   $optionarray_def = array(
 			   'new_user' => FALSE,
 			   'redirect_url' => '',
-			   'email_suffix' => 'yourschool.edu',
+			   'email_suffix' => 'example.com',
 			   'sp_type' => 'saml2',
-			   'include_path' => '/var/simplesaml',
-			   'server_hostname' => '',
-			   'server_port' => '443',
-			   'server_path' => '/simplesaml/',
+			   'include_path' => '/var/simplesamlphp',
 			   'admin_entitlement' => '',
 			   );
   
@@ -228,9 +220,6 @@ function simplesaml_authentication_options_page() {
 				 'email_suffix' => $_POST['email_suffix'],
 				 'include_path' => $_POST['include_path'],
 				 'sp_type' => $_POST['sp_type'],
-				 'server_hostname' => $_POST['server_hostname'],
-				 'server_port' => $_POST['server_port'],
-				 'server_path' => $_POST['server_path'],
 				 'admin_entitlement' => $_POST['admin_entitlement'],
 				 );
     
@@ -292,16 +281,6 @@ Automatically register new users</label>
 		<span class="setting-description">simpleSAMLphp default is SAML 2.0.</span> 
              </td>
 	     </tr>
-<!--
-	     <tr valign="top"> 
-	     <th scope="row">Server</th> 
-	     <td><label for="server_hostname">Hostname <input type="text" name="server_hostname" id="server_hostname_inp" value="<?php echo $optionarray_def['server_hostname']; ?>" size="20" /></label>
-	     <label for="server_port"> 
-	     Port <input type="text" name="server_port" id="server_port_inp" value="<?php echo $optionarray_def['server_port']; ?>" size="3" /></label>
-			<label for="server_path">Path</label> 
-			<input type="text" name="server_path" id="server_path_inp" value="<?php echo $optionarray_def['server_path']; ?>" size="20" /></label></td>
-		</tr>
--->
 	</table>
 	</fieldset>
 	<p />
