@@ -1,8 +1,8 @@
 === Plugin Name ===
-Contributors: davidoc
+Contributors: davidoc, fkooman
 Tags: authentication, saml, simpleSAMLphp
 Requires at least: 2.7.1
-Tested up to: 2.7.1
+Tested up to: 2.8.5
 Stable tag: 0.2.1
 
 Authenticate users using simpleSAMLphp (http://rnd.feide.no/simplesamlphp).
@@ -22,7 +22,7 @@ user entries are created in the local database.
 
 == Installation ==
 
-1. Download <a href="http://rnd.feide.no/simplesamlphp">simpleSAMLphp</a> on your web server and configure it <a href="http://rnd.feide.no/content/using-simplesamlphp-service-provider" title="Using simpleSAMLphp as a service provider - Feide RnD">as a service provider</a>.
+1. Download <a href="http://rnd.feide.no/simplesamlphp">simpleSAMLphp</a> version 1.5 or higher on your web server and configure it <a href="http://rnd.feide.no/content/using-simplesamlphp-service-provider" title="Using simpleSAMLphp as a service provider - Feide RnD">as a service provider</a>.
 2. Upload simplesaml-authentication.php to the wp-content/plugins/ directory of your WordPress installation.
 3. Log in as administrator and activate the plugin.  Go to the Options tab and configure the plugin. If applicable, configure an eduPersonEntitlement that will be mapped to the Administrator role. STAY LOGGED IN to your original administrator account.  You won't be able to log back in once you log out.
 4. Open a different browser, or on another computer.  Log in to your blog to make sure that it works.
@@ -30,6 +30,16 @@ user entries are created in the local database.
 6. Disable Options -> General -> Anyone can register (they won't be able to)
 
 == Frequently Asked Questions ==
+
+= What version of simpleSAMLphp is needed? =
+Starting from version 0.3.0 the plugin requires simpleSAMLphp 1.5 or higher. Use version 0.2.x of this plugin for simpleSAMLphp < 1.5 support.
+
+== Changelog ==
+
+= 0.3.0 =
+* Use simpleSAMLphp 1.5 API
+
+= 0.2.1 =
 
 = Who made this? =
 
