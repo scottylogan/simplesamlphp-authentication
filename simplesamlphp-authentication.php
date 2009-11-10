@@ -35,13 +35,18 @@ $simplesaml_configured = true;
 if ($simplesaml_authentication_opt['include_path'] == '') {
   $simplesaml_configured = false;
 } else { 
-  $include_file = $simplesaml_authentication_opt['include_path']."/www/_include.php";
+  $include_file = $simplesaml_authentication_opt['include_path']."/lib/_autoload.php";
   if (!include_once($include_file))
     $simplesaml_configured = false;
 }
 
-if ($simplesaml_configured)
-  $config = SimpleSAML_Configuration::getInstance();
+if ($simplesaml_configured) {
+  if($simplesaml_authentication_opt['sp_auth'] == '')
+    $sp_auth = 'default-sp';
+  else
+    $sp_auth = $simplesaml_authentication_opt['sp_auth'];
+  $as = new SimpleSAML_Auth_Simple($sp_auth);
+}
 
 // for wp_create_user function on line 120
 require_once (ABSPATH . WPINC . '/registration.php');
@@ -67,31 +72,17 @@ if (!class_exists('SimpleSAMLAuthentication')) {
      If the user has not logged in previously, we create an accout for them
     */
     function authenticate(&$username, &$password) {
-      global $simplesaml_authentication_opt, $simplesaml_configured, $config;
+      global $simplesaml_authentication_opt, $simplesaml_configured, $as;
 
       if (!$simplesaml_configured)
         die("simplesaml-authentication plugin not configured");
 
       // Reset values from input ($_POST and $_COOKIE)
       $username = $password = '';		
-      
-      $session = SimpleSAML_Session::getInstance();
-      $sp_type = $simplesaml_authentication_opt['sp_type'];
+
+      $as->requireAuth();
 	
-      /* Check if valid local session exists. */
-      if (!$session->isValid($sp_type) ) {
-        /* Redirect to the IdP for authentication. */
-	      SimpleSAML_Utilities::redirect(
-            '/' . $config->getBaseURL() . $sp_type . '/sp/initSSO.php',
-            array('RelayState' => SimpleSAML_Utilities::selfURL())
-            );
-      }
-
-      if (!$session->isAuthenticated() ) {
-        exit();
-      }
-
-      $attributes = $session->getAttributes();
+      $attributes = $as->getAttributes();
       
       $username = $attributes['uid'][0];
       $password = md5(SimpleSAMLAuthentication::passwordRoot());
@@ -161,17 +152,11 @@ if (!class_exists('SimpleSAMLAuthentication')) {
     
     
     function logout() {
-      global $simplesaml_authentication_opt, $simplesaml_configured, $config;
+      global $simplesaml_authentication_opt, $simplesaml_configured, $as;
       if (!$simplesaml_configured)
         die("simplesaml-authentication not configured");
 
-      $sp_type = $simplesaml_authentication_opt['sp_type'];
-	
-      SimpleSAML_Utilities::redirect(
-          '/' . $config->getBaseURL() . $sp_type . '/sp/initSLO.php',
-          array('RelayState' => wp_get_referer()
-		)
-          );
+      $as->logout();
     }
     
     /*
@@ -207,7 +192,7 @@ function simplesaml_authentication_options_page() {
 			   'new_user' => FALSE,
 			   'redirect_url' => '',
 			   'email_suffix' => 'example.com',
-			   'sp_type' => 'saml2',
+			   'sp_auth' => 'default-sp',
 			   'include_path' => '/var/simplesamlphp',
 			   'admin_entitlement' => '',
 			   );
@@ -219,7 +204,7 @@ function simplesaml_authentication_options_page() {
 				 'redirect_url' => $_POST['redirect_url'],
 				 'email_suffix' => $_POST['email_suffix'],
 				 'include_path' => $_POST['include_path'],
-				 'sp_type' => $_POST['sp_type'],
+				 'sp_auth' => $_POST['sp_auth'],
 				 'admin_entitlement' => $_POST['admin_entitlement'],
 				 );
     
@@ -273,12 +258,9 @@ Automatically register new users</label>
 		</tr>
     
 	   <tr valign="top">
-	   <th scope="row"><label for="sp_type">Service provider type</label></th> 
-	   <td><select name="sp_type" id="sp_type_inp">
-            	<option value="saml2" <?php echo ($optionarray_def['sp_type'] == 'saml2')?'selected':''; ?>>SAML 2.0</option>
-            	<option value="shib13" <?php echo ($optionarray_def['sp_type'] == 'shib13')?'selected':''; ?>>Shibboleth 1.3</option>
-		</select>
-		<span class="setting-description">simpleSAMLphp default is SAML 2.0.</span> 
+	   <th scope="row"><label for="sp_auth">Authentication source ID</label></th> 
+	   <td><input type="text" name="sp_auth" id="sp_auth_inp" value="<?php echo $optionarray_def['sp_auth']; ?>" size="35" />
+		<span class="setting-description">simpleSAMLphp default is "default-sp".</span> 
              </td>
 	     </tr>
 	</table>
