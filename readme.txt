@@ -3,7 +3,7 @@ Contributors: davidoc, fkooman
 Tags: authentication, saml, simpleSAMLphp
 Requires at least: 2.7.1
 Tested up to: 2.8.5
-Stable tag: 0.2.1
+Stable tag: 0.3.0
 
 Authenticate users using simpleSAMLphp (http://rnd.feide.no/simplesamlphp).
 
