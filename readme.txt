@@ -2,8 +2,8 @@
 Contributors: davidoc, fkooman
 Tags: authentication, saml, simpleSAMLphp
 Requires at least: 2.7.1
-Tested up to: 2.8.5
-Stable tag: 0.3.0
+Tested up to: 3.0.1
+Stable tag: 0.4.0
 
 Authenticate users using simpleSAMLphp (http://rnd.feide.no/simplesamlphp).
 
@@ -35,6 +35,9 @@ user entries are created in the local database.
 Starting from version 0.3.0 the plugin requires simpleSAMLphp 1.5 or higher. Use version 0.2.x of this plugin for simpleSAMLphp < 1.5 support.
 
 == Changelog ==
+
+= 0.4.0 =
+* Make it work again with latest WP (thanks to Ivo Jansch <ivo AT egeniq DOT com>)
 
 = 0.3.0 =
 * Use simpleSAMLphp 1.5 API
