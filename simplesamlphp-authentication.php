@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: simpleSAMLphp Authentication
-Version: 0.4.0
+Version: 0.5.1
 Plugin URI: http://grid.ie/wiki/WordPress_simpleSAMLphp_authentication
 Description: Authenticate users using <a href="http://rnd.feide.no/simplesamlphp">simpleSAMLphp</a>.
 Author: David O'Callaghan
@@ -52,25 +52,12 @@ if ($simplesaml_configured) {
 require_once (ABSPATH . WPINC . '/registration.php');
 
 // plugin hooks into authentication system
+add_action('wp_authenticate', array('SimpleSAMLAuthentication', 'authenticate'), 10, 2);
 add_action('wp_logout', array('SimpleSAMLAuthentication', 'logout'));
 add_action('lost_password', array('SimpleSAMLAuthentication', 'disable_function'));
 add_action('retrieve_password', array('SimpleSAMLAuthentication', 'disable_function'));
 add_action('password_reset', array('SimpleSAMLAuthentication', 'disable_function'));
 add_filter('show_password_fields', array('SimpleSAMLAuthentication', 'show_password_fields'));
-
-// This hook does the actual authentication
-add_filter('authenticate', array('SimpleSAMLAUthentication', 'authenticate'), 10, 3);
-
-// Workaround: wordpress redirects us to ?reauth=1 for some reason after login, which destroys the
-// cookies and logs us back out. We simply mangle the reauth param for now to prevent this.
-// Note that this is not a good solution as we can never forcibly do a reauth this way.
-// (it actually causes a redirect loop upon logout)
-// Note: phpcas plugin had the same problem and the same fix.
-function strip_reauth_from_login_url($login_url) {
-    return remove_query_arg('reauth', $login_url);
-}
-add_filter('login_url', 'strip_reauth_from_login_url');
-
 
 if (!class_exists('SimpleSAMLAuthentication')) {
   class SimpleSAMLAuthentication {
@@ -82,10 +69,9 @@ if (!class_exists('SimpleSAMLAuthentication')) {
     
     /*
      We call simpleSAMLphp to authenticate the user at the appropriate time 
-     If the user has not logged in previously, we create an accout for them
+     If the user has not logged in previously, we create an account for them
     */
     function authenticate(&$username, &$password) {
-
       global $simplesaml_authentication_opt, $simplesaml_configured, $as;
 
       if (!$simplesaml_configured)
@@ -94,20 +80,19 @@ if (!class_exists('SimpleSAMLAuthentication')) {
       // Reset values from input ($_POST and $_COOKIE)
       $username = $password = '';		
 
-      $as->requireAuth(array('ReturnTo'=>$_REQUEST['redirect_to']));
+      $as->requireAuth();
 	
       $attributes = $as->getAttributes();
-
       $username = $attributes['uid'][0];
       $password = md5(SimpleSAMLAuthentication::passwordRoot());
 
       if (!function_exists('get_userdatabylogin'))
         die("Could not load user data");
-      $userdata = get_userdatabylogin($username);
-      if ($userdata) {
+      $user = get_userdatabylogin($username);
+
+      if ($user) {
         // user already exists
-        $user =  new WP_User($userdata->ID);
-        return $user;
+        return true;
       } else {
         // first time logging in
 
@@ -120,9 +105,9 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 
           // User must have an email address to register
           $user_email = '';
-          if($attributes['email']) {
+          if($attributes['mail']) {
             // Try to get email address from attributes
-            $user_email = $attributes['email'][0];
+            $user_email = $attributes['mail'][0];
           } else {
             // Otherwise use default email suffix
             if ($simplesaml_authentication_opt['email_suffix'] != '')
@@ -134,8 +119,8 @@ if (!class_exists('SimpleSAMLAuthentication')) {
           $user_info['user_pass'] = $password;
           $user_info['user_email'] = $user_email;
 
-          if($attributes['gn'])
-            $user_info['first_name'] = $attributes['gn'][0];
+          if($attributes['givenName'])
+            $user_info['first_name'] = $attributes['givenName'][0];
           if($attributes['sn'])
             $user_info['last_name'] = $attributes['sn'][0];
 
@@ -145,16 +130,13 @@ if (!class_exists('SimpleSAMLAuthentication')) {
              in_array($simplesaml_authentication_opt['admin_entitlement'],
                 $attributes['eduPersonEntitlement'])) {
             $user_info['role'] = "administrator";
+          } else {
+            $user_info['role'] = "author";
           }
-
           $wp_uid = wp_insert_user($user_info);
-          // Update user to set role: it cannot be set when inserting new user.
-          wp_update_user(array('ID'=>$wp_uid, 'role'=>$user_info['role']));
         }
 
         else {
-          // auto-registration is disabled
-
           $error = sprintf(__('<p><strong>ERROR</strong>: %s is not registered with this blog. Please contact the <a href="mailto:%s">blog administrator</a> to create a new account!</p>'), $username, get_option('admin_email'));
           $errors['registerfail'] = $error;
           print($error);
@@ -170,7 +152,7 @@ if (!class_exists('SimpleSAMLAuthentication')) {
       if (!$simplesaml_configured)
         die("simplesaml-authentication not configured");
 
-      $as->logout();
+      $as->logout(get_settings('siteurl'));
     }
     
     /*
