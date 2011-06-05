@@ -1,9 +1,9 @@
 === Plugin Name ===
 Contributors: davidoc, fkooman
 Tags: authentication, saml, simpleSAMLphp
-Requires at least: 2.7.1
-Tested up to: 3.0.1
-Stable tag: 0.4.0
+Requires at least: 3.0.0
+Tested up to: 3.1.3
+Stable tag: 0.5.1
 
 Authenticate users using simpleSAMLphp (http://rnd.feide.no/simplesamlphp).
 
@@ -28,6 +28,7 @@ user entries are created in the local database.
 4. Open a different browser, or on another computer.  Log in to your blog to make sure that it works.
 5. In the first browser window, make the newly created user an Administrator.  You can log out now. (Alternately, you can change some entries in the wp_usermeta table to make a new user the admin)
 6. Disable Options -> General -> Anyone can register (they won't be able to)
+7. Make sure you enable administration over SSL (see http://codex.wordpress.org/Administration_Over_SSL)
 
 == Frequently Asked Questions ==
 
@@ -36,15 +37,29 @@ Starting from version 0.3.0 the plugin requires simpleSAMLphp 1.5 or higher. Use
 
 == Changelog ==
 
+= 0.5.1 =
+* Tested up to 3.1.4 alpha (svn18146)
+* Tested with simpleSAMLphp 1.8
+
+= 0.5.0 = 
+* Upgrade plugin to support Wordpress 3.1
+* Tested with simpleSAMLphp 1.7
+* Fix logout, returns to home page now
+* Modify attributes to map with default LDAP attributes (for differerent attribute names please use (or update!) the attibute mapping in the simpleSAMLphp SP configuration)
+
 = 0.4.0 =
-* Make it work again with latest WP (thanks to Ivo Jansch <ivo AT egeniq DOT com>)
+* Make it work again with latest WP (thanks to Ivo Jansch)
 
 = 0.3.0 =
 * Use simpleSAMLphp 1.5 API
 
 = 0.2.1 =
 
-= Who made this? =
+== Upgrade Notice ==
+Version 0.5.0 modified the preconfigured attributes in this plugin and now uses default LDAP attribute names. Please use the simpleSAMLphp configuration to 
+match the SAML attributes to the default LDAP attributes to keep it working.
+
+== Who made this? ==
 
 Thanks to <a href="http://wordpress.org/extend/plugins/profile/sms225">Stephen
 Schwink</a> who developed the the <a
