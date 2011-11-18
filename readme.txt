@@ -3,7 +3,7 @@ Contributors: davidoc, fkooman
 Tags: authentication, saml, simpleSAMLphp
 Requires at least: 3.0.0
 Tested up to: 3.1.3
-Stable tag: 0.5.1
+Stable tag: 0.5.2
 
 Authenticate users using simpleSAMLphp (http://rnd.feide.no/simplesamlphp).
 
@@ -36,6 +36,8 @@ user entries are created in the local database.
 Starting from version 0.3.0 the plugin requires simpleSAMLphp 1.5 or higher. Use version 0.2.x of this plugin for simpleSAMLphp < 1.5 support.
 
 == Changelog ==
+= 0.5.2 =
+* Added patch by Sixto Martin to provide single logout functionality
 
 = 0.5.1 =
 * Tested up to 3.1.4 alpha (svn18146)
