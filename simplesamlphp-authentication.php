@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: simpleSAMLphp Authentication
-Version: 0.5.1
+Version: 0.5.2
 Plugin URI: http://grid.ie/wiki/WordPress_simpleSAMLphp_authentication
 Description: Authenticate users using <a href="http://rnd.feide.no/simplesamlphp">simpleSAMLphp</a>.
 Author: David O'Callaghan
@@ -58,6 +58,42 @@ add_action('lost_password', array('SimpleSAMLAuthentication', 'disable_function'
 add_action('retrieve_password', array('SimpleSAMLAuthentication', 'disable_function'));
 add_action('password_reset', array('SimpleSAMLAuthentication', 'disable_function'));
 add_filter('show_password_fields', array('SimpleSAMLAuthentication', 'show_password_fields'));
+
+
+$slo = $simplesaml_authentication_opt['slo'];
+
+if ($slo) {
+    /*
+     Logout the user from wp if not exists an authenticated session at the simplesamlphp SP
+     This function overrides the is_logged_in function from wp core.
+     (Other solution could be to extend the wp_validate_auth_cookie func instead)
+    */
+    function is_user_logged_in() {
+        global $as;
+
+        $user = wp_get_current_user();
+        if ( $user->id > 0 ) {
+            // User is local authenticated but SP session was closed
+            if (!isset($as)) {
+                global $simplesaml_authentication_opt;
+                if($simplesaml_authentication_opt['sp_auth'] == '')
+                    $sp_auth = 'default-sp';
+                else
+                    $sp_auth = $simplesaml_authentication_opt['sp_auth'];
+                $as = new SimpleSAML_Auth_Simple($sp_auth);
+            }
+            if(!$as->isAuthenticated()) {
+                wp_logout();
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 
 if (!class_exists('SimpleSAMLAuthentication')) {
   class SimpleSAMLAuthentication {
@@ -145,8 +181,8 @@ if (!class_exists('SimpleSAMLAuthentication')) {
         }
       }
     }
-    
-    
+
+   
     function logout() {
       global $simplesaml_authentication_opt, $simplesaml_configured, $as;
       if (!$simplesaml_configured)
@@ -186,6 +222,7 @@ function simplesaml_authentication_options_page() {
   // Setup Default Options Array
   $optionarray_def = array(
 			   'new_user' => FALSE,
+			   'slo' => FALSE,
 			   'redirect_url' => '',
 			   'email_suffix' => 'example.com',
 			   'sp_auth' => 'default-sp',
@@ -197,6 +234,7 @@ function simplesaml_authentication_options_page() {
     // Options Array Update
     $optionarray_update = array (
 				 'new_user' => $_POST['new_user'],
+				 'slo' => $_POST['slo'],
 				 'redirect_url' => $_POST['redirect_url'],
 				 'email_suffix' => $_POST['email_suffix'],
 				 'include_path' => $_POST['include_path'],
@@ -259,6 +297,13 @@ Automatically register new users</label>
 		<span class="setting-description">simpleSAMLphp default is "default-sp".</span> 
              </td>
 	     </tr>
+
+       <tr valign="top">
+       <th scope="row"><label for="slo">Single Log Out</label></th>
+       <td><input type="checkbox" name="slo" id="slo" value="1" <?php checked('1', $optionarray_def['slo']); ?> />
+            <span class="setting-description">Enable Single Log out</span>
+       </td>
+       </tr>
 	</table>
 	</fieldset>
 	<p />
