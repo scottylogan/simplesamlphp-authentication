@@ -3,7 +3,7 @@ Contributors: davidoc, fkooman, usrlocaldick
 Tags: authentication, saml, simpleSAMLphp
 Requires at least: 3.0.0
 Tested up to: 3.3.1
-Stable tag: 0.6.1
+Stable tag: 0.6.2
 
 Authenticate users using simpleSAMLphp
 
@@ -44,6 +44,13 @@ Then use `wp_userid` as the username attribute.  Now **STAY LOGGED IN** to your 
 Starting from version 0.3.0 the plugin requires simpleSAMLphp 1.5 or higher. Use version 0.2.x of this plugin for simpleSAMLphp < 1.5 support.
 
 == Changelog ==
+
+= 0.6.2 =
+* Version bump
+
+= 0.6.1 =
+* Documentation formatting update
+
 = 0.6.0 =
 * Added check for illegal usernames
 * Cleaned up indentation and bracket use

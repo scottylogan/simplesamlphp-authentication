@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: simpleSAMLphp Authentication
-Version: 0.6.1
+Version: 0.6.2
 Plugin URI: http://grid.ie/wiki/WordPress_simpleSAMLphp_authentication
 Description: Authenticate users using <a href="http://rnd.feide.no/simplesamlphp">simpleSAMLphp</a>.
 Author: David O'Callaghan
