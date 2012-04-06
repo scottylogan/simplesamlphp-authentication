@@ -3,7 +3,7 @@ Contributors: davidoc, fkooman, usrlocaldick
 Tags: authentication, saml, simpleSAMLphp
 Requires at least: 3.0.0
 Tested up to: 3.3.1
-Stable tag: 0.6.2
+Stable tag: 0.6.3
 
 Authenticate users using simpleSAMLphp
 
@@ -45,6 +45,9 @@ Starting from version 0.3.0 the plugin requires simpleSAMLphp 1.5 or higher. Use
 
 == Changelog ==
 
+= 0.6.3 =
+* Fixed some bugs that occured when upgrading from 0.5.2 to 0.6.x
+
 = 0.6.2 =
 * Version bump
 
@@ -82,6 +85,7 @@ Starting from version 0.3.0 the plugin requires simpleSAMLphp 1.5 or higher. Use
 == Upgrade Notice ==
 Version 0.5.0 modified the preconfigured attributes in this plugin and now uses default LDAP attribute names. Please use the simpleSAMLphp configuration to 
 match the SAML attributes to the default LDAP attributes to keep it working.
+Version 0.6.0 introduced configurable attribute names, but kept the old hardcoded LDAP attributes as defaults.
 
 == Who made this? ==
 
