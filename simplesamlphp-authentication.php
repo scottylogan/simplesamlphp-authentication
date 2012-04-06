@@ -46,9 +46,6 @@ if ($simplesaml_configured) {
 	$as = new SimpleSAML_Auth_Simple($sp_auth);
 }
 
-// for wp_create_user function on line 120
-require_once (ABSPATH . WPINC . '/registration.php');
-
 // plugin hooks into authentication system
 add_action('wp_authenticate', array('SimpleSAMLAuthentication', 'authenticate'), 10, 2);
 add_action('wp_logout', array('SimpleSAMLAuthentication', 'logout'));
