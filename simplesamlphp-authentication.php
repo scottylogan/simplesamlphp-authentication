@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: simpleSAMLphp Authentication
-Version: 0.6.2
+Version: 0.6.3
 Plugin URI: http://grid.ie/wiki/WordPress_simpleSAMLphp_authentication
 Description: Authenticate users using <a href="http://rnd.feide.no/simplesamlphp">simpleSAMLphp</a>.
 Author: David O'Callaghan
@@ -45,9 +45,6 @@ if ($simplesaml_configured) {
 	$sp_auth = ($simplesaml_authentication_opt['sp_auth'] == '') ? 'default-sp' : $simplesaml_authentication_opt['sp_auth'];
 	$as = new SimpleSAML_Auth_Simple($sp_auth);
 }
-
-// for wp_create_user function on line 120
-require_once (ABSPATH . WPINC . '/registration.php');
 
 // plugin hooks into authentication system
 add_action('wp_authenticate', array('SimpleSAMLAuthentication', 'authenticate'), 10, 2);
