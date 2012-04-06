@@ -123,7 +123,11 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 			 * clash with an already existing account.
 			 * See sanitize_user() in wp-includes/formatting.php.
 			 */
-			$username = $attributes[$simplesaml_authentication_opt['username_attribute']][0];
+			if(empty($simplesaml_authentication_opt['username_attribute'])) {
+				$username = $attributes['uid'][0];
+			} else {
+				$username = $attributes[$simplesaml_authentication_opt['username_attribute']][0];
+			}
 			
 			if ($username != substr(sanitize_user($username, TRUE), 0, 60)) {
 				$error = sprintf(__('<p><strong>ERROR</strong><br /><br />
@@ -157,10 +161,11 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 					
 					// User must have an e-mail address to register
 					$user_email = '';
-					$user_email = $attributes[$simplesaml_authentication_opt['email_attribute']][0];
-					if ($attributes[$simplesaml_authentication_opt['email_attribute']]) {
-						// Try to get email address from attributes
-						$user_email = $attributes[$simplesaml_authentication_opt['email_attribute']][0];
+					$email_attribute = empty($simplesaml_authentication_opt['email_attribute']) ? 'mail' : $simplesaml_authentication_opt['email_attribute'];
+						
+					if($attributes[$email_attribute][0]) {
+						// Try to get email address from attribute
+						$user_email = $attributes[$email_attribute][0];
 					} else {
 						// Otherwise use default email suffix
 						if ($simplesaml_authentication_opt['email_suffix'] != '') {
@@ -173,11 +178,15 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 					$user_info['user_pass'] = $password;
 					$user_info['user_email'] = $user_email;
 					
-					if ($attributes[$simplesaml_authentication_opt['firstname_attribute']]) {
+					if(empty($simplesaml_authentication_opt['firstname_attribute'])) {
+						$user_info['first_name'] = $attributes['givenName'][0];
+					} else {
 						$user_info['first_name'] = $attributes[$simplesaml_authentication_opt['firstname_attribute']][0];
 					}
 					
-					if ($attributes[$simplesaml_authentication_opt['lastname_attribute']]) {
+					if(empty($simplesaml_authentication_opt['lastname_attribute'])) {
+						$user_info['last_name'] = $attributes['sn'][0];
+					} else {
 						$user_info['last_name'] = $attributes[$simplesaml_authentication_opt['lastname_attribute']][0];
 					}
 					
