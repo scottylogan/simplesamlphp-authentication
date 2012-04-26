@@ -1,14 +1,14 @@
 <?php
 /*
 Plugin Name: simpleSAMLphp Authentication
-Version: 0.6.3
+Version: 0.6.4
 Plugin URI: http://grid.ie/wiki/WordPress_simpleSAMLphp_authentication
 Description: Authenticate users using <a href="http://rnd.feide.no/simplesamlphp">simpleSAMLphp</a>.
 Author: David O'Callaghan
 Author URI: http://www.cs.tcd.ie/David.OCallaghan/
 */
 
-/* Copyright (C) 2009 David O'Callaghan (david.ocallaghan {} cs <> tcd <> ie)
+/* Copyright (C) 2012 David O'Callaghan (david.ocallaghan {} cs <> tcd <> ie)
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -194,7 +194,7 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 						$attributes['eduPersonEntitlement'])) {
 						$user_info['role'] = "administrator";
 					} else {
-						$user_info['role'] = "author";
+						$user_info['role'] = simplesaml_authentication_opt['default_role'];
 					}
 					
 					$wp_uid = wp_insert_user($user_info);
@@ -259,6 +259,7 @@ function simplesaml_authentication_options_page() {
 		'email_attribute' => 'mail',
 		'include_path' => '/var/simplesamlphp',
 		'admin_entitlement' => '',
+		'default_role' => 'author',
 	);
   
 	if (isset($_POST['submit']) ) {    
@@ -275,6 +276,7 @@ function simplesaml_authentication_options_page() {
 		'lastname_attribute' => $_POST['lastname_attribute'],
 		'email_attribute' => $_POST['email_attribute'],
 		'admin_entitlement' => $_POST['admin_entitlement'],
+		'default_role' => $_POST['default_role'],
 	);
 
 	update_option('simplesaml_authentication_options', $optionarray_update);
@@ -295,7 +297,13 @@ function simplesaml_authentication_options_page() {
 		<th scope="row">User registration</th>
 		<td>
 		<label for="new_user"><input name="new_user" type="checkbox" id="new_user_inp" value="1" <?php checked('1', $optionarray_def['new_user']); ?> />Automatically register new users</label>
-		<span class="setting-description">(Users will be registered with the role of Subscriber.)</span>
+		<span class="setting-description">(Users will be registered with the default role.)</span>
+		</td>
+	</tr>
+	<tr>
+		<th><label for="default_role">Default Role</label></th>
+		<td><input type="text" name="default_role" id="default_role_inp" value="<?php echo $optionarray_def['default_role']; ?>" size="40" />
+		<span class="setting-description">The default WordPress role for new users (e.g. author or subscriber).</span>
 		</td>
 	</tr>
 	<!--
