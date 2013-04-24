@@ -90,12 +90,7 @@ if ($slo) {
 if (!class_exists('SimpleSAMLAuthentication')) {
 
 	class SimpleSAMLAuthentication {
-		
-		// password used by the plugin
-		function passwordRoot() {
-			return 'Authenticated through SimpleSAML';
-		}
-		
+
 		/*
 		 We call simpleSAMLphp to authenticate the user at the appropriate time.
 		 If the user has not logged in previously, we create an account for them.
@@ -136,9 +131,7 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 				print($error);
 				exit();
 			}
-			
-			$password = md5(SimpleSAMLAuthentication::passwordRoot());
-			
+
 			if (!function_exists('get_user_by')) {
 				die("Could not load user data");
 			}
@@ -170,6 +163,11 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 						}
 					}
 					
+                                        require_once('wp-config.php');
+                                        require_once('wp-includes/class-phpass.php');
+                                        $wp_hasher = new PasswordHash(8, true);
+                                        $password = $wp_hasher->HashPassword(constant('AUTH_KEY'));
+			
 					$user_info = array();
 					$user_info['user_login'] = $username;
 					$user_info['user_pass'] = $password;
