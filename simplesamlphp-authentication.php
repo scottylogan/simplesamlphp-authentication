@@ -102,7 +102,13 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 				die("simplesaml-authentication plugin not configured");
 			}
 			// Reset values from input ($_POST and $_COOKIE)
-			$username = $password = '';
+			$username = '';
+
+			/*
+			 * Use non-predictable static password.
+			 * If the AUTH_KEY ever changes, all user_pass values should be updated
+			 */
+			$password = constant('AUTH_KEY');
 			
 			$as->requireAuth();
 			
@@ -163,11 +169,6 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 						}
 					}
 					
-                                        require_once('wp-config.php');
-                                        require_once('wp-includes/class-phpass.php');
-                                        $wp_hasher = new PasswordHash(8, true);
-                                        $password = $wp_hasher->HashPassword(constant('AUTH_KEY'));
-			
 					$user_info = array();
 					$user_info['user_login'] = $username;
 					$user_info['user_pass'] = $password;
@@ -192,7 +193,7 @@ if (!class_exists('SimpleSAMLAuthentication')) {
 						$attributes['eduPersonEntitlement'])) {
 						$user_info['role'] = "administrator";
 					} else {
-						$user_info['role'] = simplesaml_authentication_opt['default_role'];
+						$user_info['role'] = $simplesaml_authentication_opt['default_role'];
 					}
 					
 					$wp_uid = wp_insert_user($user_info);
