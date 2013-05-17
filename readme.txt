@@ -2,8 +2,8 @@
 Contributors: davidoc, fkooman, usrlocaldick
 Tags: authentication, saml, simpleSAMLphp
 Requires at least: 3.0.0
-Tested up to: 3.3.1
-Stable tag: 0.6.3
+Tested up to: 3.5.1
+Stable tag: 0.7.0
 
 Authenticate users using simpleSAMLphp
 
@@ -48,7 +48,7 @@ Starting from version 0.3.0 the plugin requires simpleSAMLphp 1.5 or higher. Use
 = 0.7.0 =
 * Fixed security issue with hard coded passwords that were generated for users that were automatically enrolled using SAML. It was wrongly assumed that these passwords would never be used if SAML takes over the normal login process. This turned out to be possible after all. An attacker could use XML-RPC calls to perform any actions that a SAML enrolled user could do. The authentication logic was fixed to prevent this. Also, there is now upgrade logic in place, which checks for existing vulnerable password hashes, and fixes that by setting them to a value that doesn't correspond to any password.
 * Cleanup, removal of deprecated function calls, small cosmetic changes.
-* Tested with 3.5.1 and SimpleSAMLphp 1.10.0.
+* Tested with 3.5.1 and simpleSAMLphp 1.10.0.
 
 = 0.6.3 =
 * Fixed some bugs that occured when upgrading from 0.5.2 to 0.6.x
