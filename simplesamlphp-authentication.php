@@ -1,14 +1,14 @@
 <?php
 /*
-Plugin Name: SimpleSAMLphp Authentication
+Plugin Name: simpleSAMLphp Authentication
 Version: 0.7.0
 Plugin URI: http://grid.ie/wiki/WordPress_simpleSAMLphp_authentication
-Description: Authenticate users using <a href="http://simplesamlphp.org">SimpleSAMLphp</a>.
+Description: Authenticate users using <a href="http://simplesamlphp.org">simpleSAMLphp</a>.
 Author: David O'Callaghan
 Author URI: http://www.cs.tcd.ie/David.OCallaghan/
 */
 
-/* Copyright (C) 2012 David O'Callaghan (david.ocallaghan {} cs <> tcd <> ie)
+/* Copyright (C) 2013 David O'Callaghan (david.ocallaghan {} cs <> tcd <> ie)
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ $simplesaml_authentication_opt = get_option('simplesaml_authentication_options')
 
 $simplesaml_configured = true;
 
-// Try to configure the SimpleSAMLphp client
+// Try to configure the simpleSAMLphp client
 if ($simplesaml_authentication_opt['include_path'] == '') {
 	$simplesaml_configured = false;
 } else { 
@@ -104,7 +104,7 @@ function invalidate_password($ID) {
 $slo = $simplesaml_authentication_opt['slo'];
 if ($slo) {
 	/*
-	 Log the user out from WordPress if the SimpleSAMLphp SP session is gone.
+	 Log the user out from WordPress if the simpleSAMLphp SP session is gone.
 	 This function overrides the is_logged_in function from wp core.
 	 (Another solution could be to extend the wp_validate_auth_cookie func instead).
 	*/
@@ -159,7 +159,7 @@ if(!class_exists('SimpleSAMLAuthenticator')) {
 				We got back the following identifier from the login process:<pre>%s</pre>
 				Unfortunately that is not suitable as a username.<br />
 				Please contact the <a href="mailto:%s">blog administrator</a> and ask to reconfigure the
-				SimpleSAMLphp plugin!</p>'), $username, get_option('admin_email'));
+				simpleSAMLphp plugin!</p>'), $username, get_option('admin_email'));
 				$errors['registerfail'] = $error;
 				print($error);
 				exit();
@@ -230,7 +230,7 @@ if(!class_exists('SimpleSAMLAuthenticator')) {
 						account!</p>'), $username, get_option('admin_email'));
 					$errors['registerfail'] = $error;
 					print($error);
-					print('<p><a href="/wp-login.php?action=logout">Log out</a> of SimpleSAMLphp.</p>');
+					print('<p><a href="/wp-login.php?action=logout">Log out</a> of simpleSAMLphp.</p>');
 					exit();
 				}
 			}
@@ -263,7 +263,7 @@ if(!class_exists('SimpleSAMLAuthenticator')) {
 
 function simplesaml_authentication_add_options_page() {
 	if (function_exists('add_options_page')) {
-		add_options_page('simpleSAMLphp Authentication', 'SimpleSAMLphp Authentication', 'manage_options',
+		add_options_page('simpleSAMLphp Authentication', 'simpleSAMLphp Authentication', 'manage_options',
 			basename(__FILE__), 'simplesaml_authentication_options_page');
 	}
 }
@@ -338,11 +338,11 @@ function simplesaml_authentication_options_page() {
 </table>
 
 <h3>SimpleSAMLphp options</h3>
-<p><em>Note:</em> Once you fill in these options, WordPress authentication will happen through <a href="http://simplesamlphp.org">SimpleSAMLphp</a>, even if you misconfigure it. To avoid being locked out of WordPress, use a second browser to check your settings before you end this session as Administrator. If you get an error in the other browser, correct your settings here. If you can not resolve the issue, disable this plug-in.</p>
+<p><em>Note:</em> Once you fill in these options, WordPress authentication will happen through <a href="http://simplesamlphp.org">simpleSAMLphp</a>, even if you misconfigure it. To avoid being locked out of WordPress, use a second browser to check your settings before you end this session as Administrator. If you get an error in the other browser, correct your settings here. If you can not resolve the issue, disable this plug-in.</p>
 
 <table class="form-table">
 	<tr valign="top">
-		<th scope="row"><label for="include_path">Path to SimpleSAMLphp</label></th>
+		<th scope="row"><label for="include_path">Path to simpleSAMLphp</label></th>
 		<td><input type="text" name="include_path" id="include_path_inp" value="<?php echo $options['include_path']; ?>" size="35" />
 		<span class="setting-description">SimpleSAMLphp suggested location is <tt>/var/simplesamlphp</tt>.</span> 
 		</td>
