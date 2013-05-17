@@ -50,8 +50,6 @@ if ($simplesaml_configured) {
 
 
 
-
-
 /*
 	Plugin hooks into authentication system
 */
