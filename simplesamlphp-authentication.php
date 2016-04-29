@@ -137,13 +137,15 @@ if ($slo) {
 if(!class_exists('SimpleSAMLAuthenticator')) {
 
 	class SimpleSAMLAuthenticator {
-	
+
 		/*
-		* Remove the reauth=1 parameter from the login URL, if applicable. This allows
-		* us to transparently bypass the mucking about with cookies that happens in
-		* wp-login.php immediately after wp_signon when a user e.g. navigates directly
-		* to wp-admin.
-		*/
+		 * "Borrowed" from https://wordpress.org/plugins/http-auth
+		 *
+		 * Remove the reauth=1 parameter from the login URL, if applicable. This allows
+		 * us to transparently bypass the mucking about with cookies that happens in
+		 * wp-login.php immediately after wp_signon when a user e.g. navigates directly
+		 * to wp-admin.
+		 */
 		function bypass_reauth($login_url) {
 			$login_url = remove_query_arg('reauth', $login_url);
 
